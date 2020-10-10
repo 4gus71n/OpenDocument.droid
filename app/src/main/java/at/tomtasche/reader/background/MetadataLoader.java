@@ -31,13 +31,13 @@ public class MetadataLoader extends FileLoader {
                 return MagicApi.loadFromBytes(buffer, MagicApi.MAGIC_MIME_TYPE | MagicApi.MAGIC_COMPRESS_TRANSP) == 0;
             }
         } catch (Throwable e) {
-            crashManager.log(e);
+            e.printStackTrace();
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    crashManager.log(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -103,8 +103,7 @@ public class MetadataLoader extends FileLoader {
             } catch (Exception e) {
                 // "URI does not contain a valid access token." or
                 // "Couldn't read row 0, col -1 from CursorWindow. Make sure the Cursor is initialized correctly before accessing data from it."
-
-                crashManager.log(e);
+                e.printStackTrace();
             }
 
             if (filename == null) {
@@ -126,7 +125,7 @@ public class MetadataLoader extends FileLoader {
                     type = MagicApi.magicFile(cachedFile.getAbsolutePath());
                 }
             } catch (Throwable e) {
-                crashManager.log(e);
+                e.printStackTrace();
             }
 
             if (type == null) {
@@ -138,7 +137,7 @@ public class MetadataLoader extends FileLoader {
                     type = URLConnection.guessContentTypeFromName(filename);
                 } catch (Exception e) {
                     // Samsung S7 Edge crashes with java.lang.StringIndexOutOfBoundsException
-                    crashManager.log(e);
+                    e.printStackTrace();
                 }
             }
 
@@ -151,7 +150,7 @@ public class MetadataLoader extends FileLoader {
                         tempStream.close();
                     }
                 } catch (Exception e) {
-                    crashManager.log(e);
+                    e.printStackTrace();
                 }
             }
 
@@ -173,14 +172,6 @@ public class MetadataLoader extends FileLoader {
                 options.fileExtension = extension;
             }
 
-            if (options.persistentUri) {
-                try {
-                    RecentDocumentsUtil.addRecentDocument(context, filename, uri);
-                } catch (IOException e) {
-                    crashManager.log(e);
-                }
-            }
-
             callOnSuccess(result);
         } catch (Throwable e) {
             options.fileType = "N/A";
@@ -199,7 +190,7 @@ public class MetadataLoader extends FileLoader {
                 try {
                     MagicApi.close();
                 } catch (Throwable e) {
-                    crashManager.log(e);
+                    e.printStackTrace();
                 }
             }
         });

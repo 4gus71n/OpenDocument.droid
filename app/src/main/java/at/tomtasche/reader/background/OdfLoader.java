@@ -39,7 +39,7 @@ public class OdfLoader extends FileLoader {
 
                 lastCore = core;
             } catch (Throwable e) {
-                crashManager.log(e);
+                e.printStackTrace();
             }
 
             File cacheDirectory = AndroidFileCache.getCacheDirectory(context);
@@ -99,7 +99,7 @@ public class OdfLoader extends FileLoader {
 
             return new File(result.outputPath);
         } catch (Throwable e) {
-            crashManager.log(e);
+            e.printStackTrace();
 
             return null;
         }

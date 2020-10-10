@@ -24,19 +24,16 @@ import androidx.annotation.Keep;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 import at.tomtasche.reader.background.AndroidFileCache;
-import at.tomtasche.reader.background.OnlineLoader;
 import at.tomtasche.reader.background.StreamUtil;
-import at.tomtasche.reader.nonfree.CrashManager;
+import at.tomtasche.reader.ui.DocumentCallback;
 import at.tomtasche.reader.ui.ParagraphListener;
-import at.tomtasche.reader.ui.activity.DocumentFragment;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class PageView extends WebView implements ParagraphListener {
 
     private ParagraphListener paragraphListener;
 
-    private DocumentFragment documentFragment;
-    private CrashManager crashManager;
+    private DocumentCallback documentCallback;
 
     private HtmlCallback htmlCallback;
 
@@ -86,8 +83,6 @@ public class PageView extends WebView implements ParagraphListener {
                         @Override
                         public void run() {
                             if (!wasCommitCalled) {
-                                crashManager.log(new RuntimeException("commit was not called"));
-
                                 loadUrl(url);
                             }
                         }
@@ -102,19 +97,12 @@ public class PageView extends WebView implements ParagraphListener {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.startsWith(OnlineLoader.GOOGLE_VIEWER_URL) || url.startsWith(OnlineLoader.MICROSOFT_VIEWER_URL) || url.contains("officeapps.live.com/")) {
+                try {
+                    getContext().startActivity(
+                            new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    return true;
+                } catch (Exception e) {
                     return false;
-                } else {
-                    try {
-                        getContext().startActivity(
-                                new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-
-                        return true;
-                    } catch (Exception e) {
-                        crashManager.log(e);
-
-                        return false;
-                    }
                 }
             }
         });
@@ -128,7 +116,7 @@ public class PageView extends WebView implements ParagraphListener {
                     getContext().startActivity(
                             new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 } catch (Exception e) {
-                    crashManager.log(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -147,9 +135,8 @@ public class PageView extends WebView implements ParagraphListener {
         super.loadUrl(url);
     }
 
-    public void setDocumentFragment(DocumentFragment documentFragment) {
-        this.documentFragment = documentFragment;
-        this.crashManager = documentFragment.getCrashManager();
+    public void setDocumentCallback(DocumentCallback documentCallback) {
+        this.documentCallback = documentCallback;
     }
 
     public void setParagraphListener(ParagraphListener paragraphListener) {
@@ -199,9 +186,9 @@ public class PageView extends WebView implements ParagraphListener {
                 inputStream.close();
             }
 
-            documentFragment.loadUri(AndroidFileCache.getCacheFileUri(), false);
+            documentCallback.loadUri(AndroidFileCache.getCacheFileUri(), false);
         } catch (IOException e) {
-            crashManager.log(e);
+            e.printStackTrace();
         }
     }
 

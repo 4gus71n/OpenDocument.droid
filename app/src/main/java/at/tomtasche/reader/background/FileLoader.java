@@ -5,17 +5,9 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.perf.metrics.Trace;
-
 import java.io.File;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-
-import at.tomtasche.reader.nonfree.AnalyticsManager;
-import at.tomtasche.reader.nonfree.CrashManager;
 
 public abstract class FileLoader {
 
@@ -37,9 +29,6 @@ public abstract class FileLoader {
 
     FileLoaderListener listener;
 
-    AnalyticsManager analyticsManager;
-    CrashManager crashManager;
-
     private boolean initialized;
     private boolean loading;
 
@@ -48,12 +37,10 @@ public abstract class FileLoader {
         this.type = type;
     }
 
-    public void initialize(FileLoaderListener listener, Handler mainHandler, Handler backgroundHandler, AnalyticsManager analyticsManager, CrashManager crashManager) {
+    public void initialize(FileLoaderListener listener, Handler mainHandler, Handler backgroundHandler) {
         this.listener = listener;
         this.mainHandler = mainHandler;
         this.backgroundHandler = backgroundHandler;
-        this.analyticsManager = analyticsManager;
-        this.crashManager = crashManager;
 
         initialized = true;
     }
@@ -70,12 +57,7 @@ public abstract class FileLoader {
         backgroundHandler.post(new Runnable() {
             @Override
             public void run() {
-                Trace trace = analyticsManager.startTrace("sync_" + type.toString());
-
                 loadSync(options);
-
-                analyticsManager.stopTrace(trace);
-
                 loading = false;
             }
         });
@@ -95,8 +77,6 @@ public abstract class FileLoader {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                analyticsManager.report("loader_success_" + type, FirebaseAnalytics.Param.CONTENT_TYPE, result.options.fileType, FirebaseAnalytics.Param.CONTENT, result.options.fileExtension);
-
                 FileLoaderListener strongReferenceListener = listener;
                 if (strongReferenceListener != null) {
                     listener.onSuccess(result);
@@ -106,14 +86,9 @@ public abstract class FileLoader {
     }
 
     void callOnError(Result result, Throwable t) {
-        crashManager.log(result.loaderType.name() + " failed");
-        crashManager.log(t);
-
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                analyticsManager.report("loader_error_" + type, FirebaseAnalytics.Param.CONTENT_TYPE, result.options.fileType, FirebaseAnalytics.Param.CONTENT, result.options.fileExtension);
-
                 FileLoaderListener strongReferenceListener = listener;
                 if (strongReferenceListener != null) {
                     listener.onError(result, t);

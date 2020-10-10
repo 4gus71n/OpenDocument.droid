@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OpenDocument.droid.iml" filepath="$PROJECT_DIR$/OpenDocument.droid.iml" group="OpenDocument.droid" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenDocument.droid-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenDocument.droid-app.iml" group="OpenDocument.droid/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Repositories-OpenDocument.droid.iml" filepath="$PROJECT_DIR$/.idea/modules/Repositories-OpenDocument.droid.iml" group="OpenDocument.droid" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Repositories-OpenDocument.droid-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Repositories-OpenDocument.droid-app.iml" group="OpenDocument.droid/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="OpenDocument.droid/app" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/workspace-OpenDocument.droid.iml" filepath="$PROJECT_DIR$/.idea/modules/workspace-OpenDocument.droid.iml" group="OpenDocument.droid" />
     </modules>

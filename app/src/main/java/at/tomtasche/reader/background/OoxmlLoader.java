@@ -2,20 +2,8 @@ package at.tomtasche.reader.background;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Environment;
-import android.os.Handler;
 import android.webkit.MimeTypeMap;
-
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeoutException;
-
-import at.tomtasche.reader.nonfree.AnalyticsManager;
-import at.tomtasche.reader.nonfree.CrashManager;
 
 public class OoxmlLoader extends FileLoader {
 
@@ -51,7 +39,7 @@ public class OoxmlLoader extends FileLoader {
 
                 lastCore = core;
             } catch (Throwable e) {
-                crashManager.log(e);
+                e.printStackTrace();
             }
 
             File cacheDirectory = AndroidFileCache.getCacheDirectory(context);
@@ -102,7 +90,6 @@ public class OoxmlLoader extends FileLoader {
 
         CoreWrapper.CoreResult result = lastCore.backtranslate(lastCoreOptions, htmlDiff);
         if (result.errorCode != 0) {
-            crashManager.log(new RuntimeException("could not retranslate file with error " + result.errorCode));
             return null;
         }
 
